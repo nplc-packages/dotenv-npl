@@ -1,0 +1,59 @@
+local _M = commonlib.gettable("Dotenv")
+local table_insert = table.insert
+local gsub = string.gsub
+local sub = string.sub
+
+local function file_exists(path)
+  return ParaIO.DoesFileExist(path, false)
+end
+
+local function get_file_text(filename)
+  local file = ParaIO.open(filename, "r")
+  local text
+  if (file and file:IsValid()) then
+    text = file:GetText()
+    file:close()
+  end
+  return text
+end
+
+local function split(str, pattern)
+  local arr = {}
+  for part in str:gmatch(pattern) do
+    table_insert(arr, part)
+  end
+  return arr
+end
+
+local function trim(s)
+  return gsub(gsub(s, "^%s+", ""), "%s+$", "")
+end
+
+local function is_comment(line)
+  return sub(line, 1, 1) == "#"
+end
+
+local function parse_line(raw_data)
+  local line = trim(raw_data)
+  if is_comment(line) then return end
+  local kv_array = split(line, "[^=]+")
+  if #kv_array ~= 2 then
+    error("invalid line: " .. raw_data)
+  end
+  ENV[kv_array[1]] = kv_array[2]
+end
+
+function _M.load(path)
+  path = path or ".env"
+  ENV = ENV or {}
+  if file_exists(path) then
+    local raw_file = get_file_text(path)
+    local data_table = split(raw_file, "[^\n]+")
+    if #data_table == 0 or trim(raw_file) == "" then return end
+    for line, raw_data in pairs(data_table) do
+      parse_line(raw_data)
+    end
+  else
+    error("env file doesn't exist!")
+  end
+end

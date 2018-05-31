@@ -1,0 +1,17 @@
+{
+    ["keywords"] = {
+      [1] = "dotenv",
+      [2] = "npl"
+    },
+    ["version"] = "1.0.0",
+    ["readme"] = "README.md",
+    ["dependencies"] = {
+      ["telescope"] = {
+        ["package_src"] = "nplc-packages/telescope",
+        ["version"] = "1.0.0"
+      }
+    },
+    ["author"] = "leopoldchen",
+    ["name"] = "dotenv",
+    ["description"] = "dotenv for npl",
+  }

@@ -1,0 +1,45 @@
+NPL.load("dotenv")
+NPL.load("./specs/")
+
+describe(
+    "dotenv",
+    function()
+        local contexts
+        context(
+            "#load",
+            function()
+                it(
+                    "should load default .env file",
+                    function()
+                        Dotenv.load()
+                        assert_equal(ENV["DOTENV"], "on")
+                    end
+                )
+                it(
+                    "should load specified .env file",
+                    function()
+                        Dotenv.load(".test.env")
+                        assert_equal(ENV["HELLO"], "dotenv")
+                    end
+                )
+                it(
+                    "should raise error if .env file is not valid",
+                    function()
+                        assert_error(
+                            function()
+                                Dotenv.load(".error.env")
+                            end
+                        )
+                    end
+                )
+                it(
+                    "should allow to add comments",
+                    function()
+                        Dotenv.load(".comment.env")
+                        assert_equal(ENV["HELLO"], "dotenv")
+                    end
+                )
+            end
+        )
+    end
+)
